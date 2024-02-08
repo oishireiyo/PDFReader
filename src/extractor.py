@@ -2,9 +2,14 @@ import fitz
 from typing import Union
 
 class PDFTextExtractor(object):
-  def __init__(self, pdf_path: str) -> None:
-    self.pdf_path = pdf_path
-    self.pdf = fitz.open(pdf_path)
+  def __init__(self) -> None:
+    self.pdf = None
+
+  def set_pdf_with_path(self, path: str) -> None:
+    self.pdf = fitz.open(path)
+
+  def set_pdf_with_content(self, content: str) -> None:
+    self.pdf = fitz.open(stream=content, filetype='pdf')
 
   def get_metadata(self) -> dict[str, Union[str, None]]:
     return self.pdf.metadata
@@ -18,11 +23,11 @@ class PDFTextExtractor(object):
     return page.get_text()
 
   def extract_interval_page_texts(self, interval: tuple) -> str:
-    texts = ''.join([self.extract_single_page_text(page_number=page_number) for page_number in interval])
+    texts = ''.join([self.extract_single_page_texts(page_number=page_number) for page_number in interval])
     return texts
 
   def extract_all_page_texts(self):
-    texts = ''.join([self.extract_single_page_text(page_number=page_number) for page_number in range(self.pdf.page_count)])
+    texts = ''.join([self.extract_single_page_texts(page_number=page_number) for page_number in range(self.pdf.page_count)])
     return texts
 
   # Extract images
